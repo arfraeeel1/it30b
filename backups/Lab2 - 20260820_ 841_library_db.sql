@@ -21,7 +21,6 @@ USE `library_db`;
 -- Table structure for table `students`
 --
 
-
 DROP TABLE IF EXISTS `students`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
@@ -30,8 +29,9 @@ CREATE TABLE `students` (
   `student_first_name` varchar(50) NOT NULL,
   `student_last_name` varchar(50) NOT NULL,
   `student_course` varchar(50) NOT NULL,
+  `student_created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   PRIMARY KEY (`student_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -40,7 +40,7 @@ CREATE TABLE `students` (
 
 LOCK TABLES `students` WRITE;
 /*!40000 ALTER TABLE `students` DISABLE KEYS */;
-INSERT INTO `students` VALUES (1,'ARFRAEL','BALDESCO','BSIT');
+INSERT INTO `students` VALUES (1,'ARFRAEL','BALDESCO','BSIT','2026-08-21 00:11:13'),(2,'ARCH JAN','BALDESCO','BSIT','2026-08-21 00:12:13'),(3,'ARMEL','BALDESCO','BSBA','2026-08-21 00:13:41'),(4,'ARIEL','BALDESCO','BSIT','2026-08-21 00:12:03');
 /*!40000 ALTER TABLE `students` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
