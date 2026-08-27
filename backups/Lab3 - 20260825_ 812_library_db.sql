@@ -35,7 +35,7 @@ CREATE TABLE `books` (
   `book_title` varchar(100) NOT NULL,
   `book_author` varchar(100) NOT NULL,
   `book_category` varchar(50) NOT NULL,
-  `bookd_created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `book_created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP(),
   PRIMARY KEY (`book_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
