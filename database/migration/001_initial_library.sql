@@ -92,5 +92,3 @@ INSERT INTO borrow (student_id, book_id
 (2, 1),
 (3, 3);
 
-
-
