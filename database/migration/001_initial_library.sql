@@ -11,8 +11,7 @@ student_last_name VARCHAR(50) NOT NULL,
 student_course VARCHAR (50) NOT NULL,
 
 --Student create at timestamp
-student_created_at TIMESTAMP NOT NULL,
-DEFAULT CURRENT_TIMESTAMP
+  student_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 
 )ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
@@ -20,7 +19,7 @@ COLLATE=utf8mb4_general_ci;
 
 --2 books table
 CREATE TABLE IF NOT EXISTS books (
-    bookd_id INT AUTO_INCREMENT PRIMARY KEY,
+    book_id INT AUTO_INCREMENT PRIMARY KEY,
 
 --book details
     book_title VARCHAR(50) NOT NULL,
@@ -28,12 +27,11 @@ CREATE TABLE IF NOT EXISTS books (
     book_category VARCHAR(50) NOT NULL,
 
 --book created at timestamp
-    book_created_at TIMESTAMP NOT NULL
-    DEFAULT CURRENT_TIMESTAMP
+    book_created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 
 )ENGINE=InnoDB
 DEFAULT CHARSET=utf8mb4
-COLLATE=utf8mn4_general_ci;
+COLLATE=utf8mb4_general_ci;
 
 --#3 borrow table
 CREATE TABLE IF NOT EXISTS borrow(
@@ -45,12 +43,10 @@ CREATE TABLE IF NOT EXISTS borrow(
     book_id INT NOT NULL,
 
     --borrow timestamp not null by default
-    borrow_date TIMESTAMP NOT NULL
-    DEFAULT CURRENT_TIMESTAMP,
+    borrow_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
    --borrow return timestamp null by default
-    borrow_return_date TIMESTAMP NULL
-    DEFAULT NULL,
+     borrow_return_date TIMESTAMP NULL DEFAULT NULL,
 
     --borrow tablle constraints and foreign keys
     CONSTRAINT fk_borrow_student
@@ -86,9 +82,9 @@ VALUES
 ('To kill a Mockingbird', 'The book Thief', 'The Alchemist');
 
 -- insert statement #3: insert borrow   
-INSERT INTO borrow (student_id, book_id
-)VALUES
-(1, 2)
+INSERT INTO borrow (student_id, book_id)
+VALUES
+(1, 2),
 (2, 1),
 (3, 3);
 
