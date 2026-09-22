@@ -1,144 +1,227 @@
 
-<?php
-// Database Connection
-$host = "localhost";
-$dbname = "it30_lab_db";
-$username = "root";
-$pass = "";
-$charset = "utf8mb4";
+    <?php
+    // Database Connection
+    $host = "localhost";
+    $dbname = "it30_lab_db";
+    $username = "root";
+    $pass = "";
+    $charset = "utf8mb4";
 
-$dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
+    $dsn = "mysql:host=$host;dbname=$dbname;charset=$charset";
 
-$options = [
-    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-    PDO::ATTR_EMULATE_PREPARES => false,
-];
+    $options = [
+        PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+        PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+        PDO::ATTR_EMULATE_PREPARES => false,
+    ];
 
-try {
-    $pdo = new PDO($dsn, $username, $pass, $options);
-} catch (PDOException $e) {
-    die("Database connection failed: " . $e->getMessage());
+    try {
+        $pdo = new PDO($dsn, $username, $pass, $options);
+    } catch (PDOException $e) {
+        die("Database connection failed: " . $e->getMessage());
+    }
+
+    // Session
+    session_start();
+
+    // Determine current section
+    $section = $_GET['section'] ?? 'students';
+
+    // Determine CRUD operation
+    $action = $_GET['action'] ?? '';
+
+    // Fetch Students
+    if ($section === 'students') {
+
+        $stmt = $pdo->query("
+            SELECT *
+            FROM students
+            ORDER BY student_id DESC
+        ");
+
+        $students = $stmt->fetchAll();
+    }
+
+   // Create Student
+    if($section=='students' && $action==='create'){
+        if($_SERVER['REQUEST_METHOD']==='POST'){
+
+        $firstName = trim($_POST['student_first_name'] ?? '');
+        $lastName = trim($_POST['student_last_name'] ?? '');
+        $course = trim($_POST['student_course'] ?? '');
+
+        if($firstName !== '' && $lastName !== '' && $course !== ''){
+            $sql = "
+            INSERT INTO students(
+            student_first_name,
+            student_last_name,
+            student_course
+            )
+            VALUES (?,?,?)
+            ";
+
+            $stmt=$pdo->prepare($sql);
+
+            $stmt->execute([
+                $firstName,
+                $lastName,
+                $course
+            ]);
+
+            header("Location: index.php?section=students");
+            exit;
+        }
+    }
 }
+    ?>
 
-// Session
-session_start();
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Simple Library System</title>
+    </head>
 
-// Determine current section
-$section = $_GET['section'] ?? 'students';
+    <body>
 
-// Determine CRUD operation
-$action = $_GET['action'] ?? '';
+        <h1>Simple Library System</h1>
 
-// Fetch Students
-if ($section === 'students') {
+        <nav>
+            <a href="index.php?section=students">Students</a> |
+            <a href="index.php?section=books">Books</a> |
+            <a href="index.php?section=borrow">Borrow</a>
+        </nav>
 
-    $stmt = $pdo->query("
-        SELECT *
-        FROM students
-        ORDER BY student_id DESC
-    ");
+        <hr>
 
-    $students = $stmt->fetchAll();
-}
-?>
+        <?php if ($section === 'students'): ?>
+            <h1>Students</h1>
+            <p>
+            <a href="index.php?section=students&action=create">
+                    Add Student
+                </a>
+        </p>
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Simple Library System</title>
-</head>
+        <?php if ($action === 'create'): ?>
+        <h2>Create Student</h2>
 
-<body>
+        <form method="POST">
+            <p>
+            <label>First Name:</label>
+            <br>
+            <input type= "text"
+                    name="student_first_name"
+                    required
 
-    <h1>Simple Library System</h1>
+                    />
+        </p>
+        <p>
+                    <label>Last Name:</label>
+            <br>
+            <input type= "text"
+                    name="student_last_name"
+                    required
 
-    <nav>
-        <a href="index.php?section=students">Students</a> |
-        <a href="index.php?section=books">Books</a> |
-        <a href="index.php?section=borrow">Borrow</a>
-    </nav>
+                    />
+        </p>
+        <p>
+                    <label>Course:</label>
+            <br>
+            <input type= "text"
+                    name="student_course"
+                    required
 
-    <hr>
+                    />
+        </p>
 
-    <?php if ($section === 'students'): ?>
+        <button type="submit">
+            Save
+        </button>
 
-        <h1>Students</h1>
+        <a href="index.php?section=students">
+            Cancel
+        </a>
 
-        <table border="1" cellpadding="8">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                    <th>Course</th>
-                    <th>Created At</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-
-            <tbody>
-
-                <?php if (empty($students)): ?>
-
+        </form>
+        <?php else: ?>
+            
+            <table border="1" cellpadding="8">
+                <thead>
                     <tr>
-                        <td colspan="6">No students found.</td>
+                        <th>ID</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th>Course</th>
+                        <th>Created At</th>
+                        <th>Action</th>
                     </tr>
+                </thead>
 
-                <?php else: ?>
+                <tbody>
 
-                    <?php foreach ($students as $student): ?>
+                    <?php if (empty($students)): ?>
 
                         <tr>
-                            <td>
-                                <?= htmlspecialchars($student['student_id']) ?>
-                            </td>
-
-                            <td>
-                                <?= htmlspecialchars($student['student_first_name']) ?>
-                            </td>
-
-                            <td>
-                                <?= htmlspecialchars($student['student_last_name']) ?>
-                            </td>
-
-                            <td>
-                                <?= htmlspecialchars($student['student_course']) ?>
-                            </td>
-
-                            <td>
-                                <?= htmlspecialchars($student['student_created_at']) ?>
-                            </td>
-
-                            <td>
-                                <a>
-                                    Edit
-                                </a>h
-                                |
-                                <a>
-                                    Delete
-                                </a>
-                            </td>
+                            <td colspan="6">No students found.</td>
                         </tr>
 
-                    <?php endforeach; ?>
+                    <?php else: ?>
 
-                <?php endif; ?>
+                        <?php foreach ($students as $student): ?>
 
-            </tbody>
-        </table>
+                            <tr>
+                                <td>
+                                    <?= htmlspecialchars($student['student_id']) ?>
+                                </td>
 
-    <?php endif; ?>
+                                <td>
+                                    <?= htmlspecialchars($student['student_first_name']) ?>
+                                </td>
 
-<?php if ($section === 'books'): ?>
-  <h1>Books</h1>
-<?php endif;?>
+                                <td>
+                                    <?= htmlspecialchars($student['student_last_name']) ?>
+                                </td>
 
-<?php if ($section === 'borrow'): ?>
-  <h1>Borrow</h1>
-<?php endif;?>
+                                <td>
+                                    <?= htmlspecialchars($student['student_course']) ?>
+                                </td>
 
-</body>
-</html>
+                                <td>
+                                    <?= htmlspecialchars($student['student_created_at']) ?>
+                                </td>
+
+                                <td>
+                                    <a>
+                                        Edit
+                                    </a>
+                                    |
+                                    <a>
+                                        Delete
+                                    </a>
+                                </td>
+                            </tr>
+
+                        <?php endforeach; ?>
+
+                    <?php endif; ?>
+
+                </tbody>
+            </table>
+        <?php endif; ?>
+            
+
+
+
+        <?php endif; ?>
+
+    <?php if ($section === 'books'): ?>
+    <h1>Books</h1>
+    <?php endif;?>
+
+    <?php if ($section === 'borrow'): ?>
+    <h1>Borrow</h1>
+    <?php endif;?>
+
+    </body>
+    </html>
